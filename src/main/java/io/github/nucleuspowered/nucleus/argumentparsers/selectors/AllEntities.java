@@ -6,15 +6,11 @@ package io.github.nucleuspowered.nucleus.argumentparsers.selectors;
 
 import java.util.regex.Pattern;
 
-/**
- * Selector to get all players
- */
-public class AllPlayers extends StandardSelector.PlayerSelector {
+public class AllEntities extends StandardSelector.EntitySelector {
+    public static final AllEntities INSTANCE = new AllEntities();
+    private final Pattern pattern = Pattern.compile("^e(\\[.*\\])?$");
 
-    public static final AllPlayers INSTANCE = new AllPlayers();
-    private final Pattern pattern = Pattern.compile("^a(\\[.*\\])?$");
-
-    private AllPlayers() {}
+    private AllEntities() {}
 
     @Override
     public Pattern selector() {

@@ -4,6 +4,7 @@
  */
 package io.github.nucleuspowered.nucleus.argumentparsers.selectors;
 
+import com.flowpowered.math.vector.Vector3d;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SelectorParser;
 import org.spongepowered.api.Sponge;
@@ -11,9 +12,11 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.util.Tuple;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +49,18 @@ public class NearestPlayerFromSpecifiedLocation implements SelectorParser<Player
         World spongeWorld = Sponge.getServer().getWorld(world).orElseThrow(() -> args.createError(Nucleus.getNucleus().getMessageProvider().getTextMessageWithFormat("args.selector.noworld", world)));
 
         // Remove players "out of this world", then sort players by distance from current location.
-        return NearestPlayer.getNearestPlayerFromLocation(Sponge.getServer().getOnlinePlayers(), new Location<>(spongeWorld, x, y, z), args);
+        return getNearestPlayerFromLocation(Sponge.getServer().getOnlinePlayers(), new Location<>(spongeWorld, x, y, z), args);
     }
+
+
+    private Player getNearestPlayerFromLocation(Collection<Player> playerCollection, Location<World> locationInWorld, CommandArgs args) throws ArgumentParseException {
+        Vector3d currentLocation = locationInWorld.getPosition();
+        return playerCollection.parallelStream()
+            .filter(x -> x.getWorld().getUniqueId().equals(locationInWorld.getExtent().getUniqueId()))
+            .map(x -> new Tuple<>(x, x.getLocation().getPosition().distanceSquared(currentLocation)))
+            .min((x, y) -> x.getSecond().compareTo(y.getSecond()))
+            .orElseThrow(() -> args.createError(Nucleus.getNucleus().getMessageProvider().getTextMessageWithFormat("args.selector.notarget")))
+            .getFirst();
+    }
+
 }
