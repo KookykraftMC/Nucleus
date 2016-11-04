@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.api.data.WarpData;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
+import io.github.nucleuspowered.nucleus.internal.annotations.CommandAlias;
 import io.github.nucleuspowered.nucleus.internal.annotations.Permissions;
 import io.github.nucleuspowered.nucleus.internal.annotations.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.annotations.RunAsync;
@@ -41,6 +42,7 @@ import javax.annotation.Nullable;
  */
 @Permissions(prefix = "warp", suggestedLevel = SuggestedLevel.USER)
 @RunAsync
+@CommandAlias("warps")
 @RegisterCommand(value = {"list"}, subcommandOf = WarpCommand.class)
 public class ListWarpCommand extends io.github.nucleuspowered.nucleus.internal.command.AbstractCommand<CommandSource> {
 
